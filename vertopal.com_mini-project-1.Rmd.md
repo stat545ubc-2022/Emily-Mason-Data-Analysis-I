@@ -1,0 +1,311 @@
+\#load libraries
+
+library(datateachr) library(tidyverse)
+
+# Task 1: Choose your favorite dataset (10 points)
+
+The `datateachr` package by Hayley Boyce and Jordan Bourak currently
+composed of 7 semi-tidy datasets for educational purposes. Here is a
+brief description of each dataset:
+
+-   *apt\_buildings*: Acquired courtesy of The City of Toronto’s Open
+    Data Portal. It currently has 3455 rows and 37 columns.
+
+-   *building\_permits*: Acquired courtesy of The City of Vancouver’s
+    Open Data Portal. It currently has 20680 rows and 14 columns.
+
+-   *cancer\_sample*: Acquired courtesy of UCI Machine Learning
+    Repository. It currently has 569 rows and 32 columns.
+
+-   *flow\_sample*: Acquired courtesy of The Government of Canada’s
+    Historical Hydrometric Database. It currently has 218 rows and 7
+    columns.
+
+-   *parking\_meters*: Acquired courtesy of The City of Vancouver’s Open
+    Data Portal. It currently has 10032 rows and 22 columns.
+
+-   *steam\_games*: Acquired courtesy of Kaggle. It currently has 40833
+    rows and 21 columns.
+
+-   *vancouver\_trees*: Acquired courtesy of The City of Vancouver’s
+    Open Data Portal. It currently has 146611 rows and 20 columns.
+
+1.1 Out of the 7 datasets available in the `datateachr` package, choose
+**4** that appeal to you based on their description. Write your choices
+below:
+
+1: *steam\_games* 2: *cancer\_sample* 3: *vancouver\_trees* 4:
+*apt\_buildings*
+
+1.2 One way to narrowing down your selection is to *explore* the
+datasets. Use your knowledge of dplyr to find out at least *3*
+attributes about each of these datasets (an attribute is something such
+as number of rows, variables, class type…). The goal here is to have an
+idea of *what the data looks like*.
+
+## EXPLORE HERE
+
+\#looking at each data set to obtain the following attributes:
+dim(dataset) to find \# variables, \# rows, and summary(dataset) to find
+\# of numerical variables dim(steam\_games) summary(steam\_games) \#
+Steam: variables = 21, \# rows = 40,833, \# numerical variables = 4
+
+dim(cancer\_sample) summary(cancer\_sample) \#Cancer: \# variables = 32,
+\# rows = 569, \# numerical variables = 31
+
+dim(vancouver\_trees) summary(vancouver\_trees) \# trees: \# variables =
+20, \# rows = 146,611, \# numerical variables = 8
+
+dim(apt\_buildings) summary(apt\_buildings) \# apt: \# variables = 37,
+\# rows = 3,455, \# numerical variables = 9
+
+1.3 Now that you’ve explored the 4 datasets that you were initially most
+interested in, let’s narrow it down to 2. What lead you to choose these
+2? Briefly explain your choices below, and feel free to include any code
+in your explanation.
+
+\#dataset 1: cancer\_sample
+
+\#reasoning: cancer\_sample contains the fewest rows and the highest
+number of numerical variables, which may lend itself well to a first
+time analysis and quantitative questions
+
+\#dataset 2: steam\_games
+
+\#reasoning: steam\_games contains the highest number of character
+variable types of the considered datasets and a mid-range number of
+rows. I think this dataset has enough data to answer some interesting
+questions comparing categories, and who isn’t a video games nerd in this
+course :p
+
+1.4 Time for the final decision! Going back to the beginning, it’s
+important to have an *end goal* in mind. For example, if I had chosen
+the `titanic` dataset for my project, I might’ve wanted to explore the
+relationship between survival and other variables. Try to think of 1
+research question that you would want to answer with each dataset. Note
+them down below, and make your final choice based on what seems more
+interesting to you!
+
+\#cancer\_sample: Is there a correlation between cancer diagnosis and
+tumour dimension (area and radius)?
+
+\#steam\_games: Which developers have been most successful on steam with
+new releases based on reviews and achievements?
+
+\#Final selection: cancer\_sample
+
+# Task 2: Exploring your dataset (15 points)
+
+If we rewind and go back to the learning objectives, you’ll see that by
+the end of this deliverable, you should have formulated *4* research
+questions about your data that you may want to answer during your
+project. However, it may be handy to do some more exploration on your
+dataset of choice before creating these questions - by looking at the
+data, you may get more ideas. **Before you start this task, read all
+instructions carefully until you reach START HERE under Task 3**.
+
+2.1 Complete *4 out of the following 8 exercises* to dive deeper into
+your data. All datasets are different and therefore, not all of these
+tasks may make sense for your data - which is why you should only answer
+*4*. Use *dplyr* and *ggplot*.
+
+1.  Plot the distribution of a numeric variable.
+
+\#plotting distribution of mean tumor area using a histogram:
+
+ggplot(cancer\_sample, aes(x=area\_mean)) + geom\_histogram(binwidth=50,
+colour = “purple”)
+
+1.  Explore the relationship between 2 variables in a plot.
+
+\#plotting the relationship between mean area and diagnosis using an
+overlaid density plot
+
+ggplot(cancer\_sample, aes(x=area\_mean, col=diagnosis)) +
+geom\_density()
+
+1.  Filter observations in your data according to your own criteria.
+    Think of what you’d like to explore - again, if this was the
+    `titanic` dataset, I may want to narrow my search down to passengers
+    born in a particular year…
+
+\#filtering data to include only patients with “M” diagnosis M\_patients
+&lt;- filter(cancer\_sample, diagnosis == “M”)
+
+1.  Use a boxplot to look at the frequency of different observations
+    within a single variable. You can do this for more than one variable
+    if you wish!
+
+\#plotting mean tumor area using a boxplot:
+
+boxplot(cancer\_sample$area\_mean, horizontal = TRUE, main
+=“distribution of tumor area means”, xlab=“mean areas”)
+
+2.2 For each of the 4 exercises that you complete, provide a *brief
+explanation* of why you chose that exercise in relation to your data (in
+other words, why does it make sense to do that?), and sufficient
+comments for a reader to understand your reasoning and code.
+
+\#1. plotting distribution of numerical variable \# I chose to display
+the distribution of mean tumor area for all patients - this will help in
+understanding how this distribution may change for different groups (ie.
+for patients of differing diagnoses)
+
+\#4. comparing two variables in a graph \# I chose to plot mean tumor
+area against diagnosis to answer my original research question. It is
+visually apparent that those with a B diagnosis have a much narrow
+distribution of areas than those with an M diagnosis.
+
+\#5. filter \#I filtered the data to include only those with an M
+diagnosis because it had the wider distribution of tumor area - this
+encourages me to further investigate tumor-related variables for this
+subset.
+
+\#6 boxplot distribution \#I plotted mean tumor area to show how the
+means were distributed in a more clear way than using a histogram. This
+plot allows me to visually see where the quartiles of the data lie.
+
+## Task 4
+
+So far, you have chosen a dataset and gotten familiar with it through
+exploring the data. Now it’s time to figure out 4 research questions
+that you would like to answer with your data! Write the 4 questions and
+any additional comments at the end of this deliverable. These questions
+are not necessarily set in stone - TAs will review them and give you
+feedback; therefore, you may choose to pursue them as they are for the
+rest of the project, or make modifications!
+
+# Task 4: Process and summarize your data (13 points)
+
+From Task 2, you should have an idea of the basic structure of your
+dataset (e.g. number of rows and columns, class types, etc.). Here, we
+will start investigating your data more in-depth using various data
+manipulation functions. \## Research Questions: \#1. How do tumor
+dimensions (radius, perimeter, area) compare for patients with malignant
+and benign tumors? \#2. Are mean tumor area and and texture related?
+\#3. Are mean symmetry and smoothness related? \#4. Are larger
+perimeters correlated with malignant diagnoses?
+
+### 1.1 (10 points)
+
+Now, for each of your four research questions, choose one task from
+options 1-4 (summarizing), and one other task from 4-8 (graphing). You
+should have 2 tasks done for each research question (8 total). Make sure
+it makes sense to do them! (e.g. don’t use a numerical variables for a
+task that needs a categorical variable.). Comment on why each task helps
+(or doesn’t!) answer the corresponding research question.
+
+Ensure that the output of each operation is printed!
+
+**Summarizing:**
+
+1.  Compute the *range*, *mean*, and *two other summary statistics* of
+    **one numerical variable** across the groups of **one categorical
+    variable** from your data.
+2.  Compute the number of observations for at least one of your
+    categorical variables. Do not use the function `table()`!
+3.  Create a categorical variable with 3 or more groups from an existing
+    numerical variable. You can use this new variable in the other
+    tasks! *An example: age in years into “child, teen, adult, senior”.*
+4.  Based on two categorical variables, calculate two summary statistics
+    of your choosing.
+
+**Graphing:**
+
+1.  Create a graph out of summarized variables that has at least two
+    geom layers.
+2.  Create a graph of your choosing, make one of the axes logarithmic,
+    and format the axes labels so that they are “pretty” or easier to
+    read.
+3.  Make a graph where it makes sense to customize the alpha
+    transparency.
+4.  Create 3 histograms out of summarized variables, with each histogram
+    having different sized bins. Pick the “best” one and explain why it
+    is the best.
+
+Make sure it’s clear what research question you are doing each operation
+for!
+
+\##Research Question 1 —————————- \# summarizing selection: \#4
+
+\#creating categories from mean area
+summary(cancer\_sample*a**r**e**a*<sub>*m*</sub>*e**a**n*)*a**r**e**a*<sub>*c*</sub>*a**t* &lt;  − *c**u**t*(*c**a**n**c**e**r*<sub>*s*</sub>*a**m**p**l**e*area\_mean,
+seq(0,2500,250), labels=c(1:10)) \#summary stats: contingency tables and
+relative frequency using prop.table to describe frequency of area means
+between benign and malignant diagnoses table1 &lt;-
+table(cancer\_sample$diagnosis, area\_cat) prop.table(table1)
+
+# graphing selection: \#7
+
+\#to show the cut function worked to categorize tumor area in ascending
+values: ggplot(cancer\_sample, aes(x=area\_mean, y=perimeter\_mean,
+color=area\_cat)) + geom\_point(alpha=0.5)
+
+\#to show how diagnosis is distributed among tumor dimensions
+ggplot(cancer\_sample, aes(x=area\_mean, y=perimeter\_mean,
+color=diagnosis)) + geom\_point(alpha=0.5)
+
+\##Research Question 2—————————— \#summarizing selection: \#3
+
+\#to categorize texture into 4 levels instead of a numerical variable,
+to better visualize its relationship with tumor area. text\_cat &lt;-
+cut(cancer\_sample$texture\_mean, seq(0,40,10),
+labels=c(“lowest”,“low”,“some”,“High”))
+
+\#graphing selection: \#7
+
+\#7 showing color with texture categories on geom\_point graph with both
+variables shown numerically. ggplot(cancer\_sample, aes(x=area\_mean,
+y=texture\_mean, color=text\_cat)) + geom\_point(alpha=0.5)
+
+\##Research Question 3——————————- \#summarizing selection: \#3 (for
+symmetry variable, to better visualize relationship with smoothness)
+symmetry\_cat &lt;-
+cut(cancer\_sample$symmetry\_mean, seq(0,0.30,0.1), labels=c("low","medium","high")) smooth\_cat &lt;- cut(cancer\_sample$smoothness\_mean,
+seq(0,0.18,0.09), labels=c(“rough”, “smooth”)) \#graphing selection:#5
+ggplot(cancer\_sample, aes(x=symmetry\_mean, y=smoothness\_mean,
+colour=smooth\_cat)) + geom\_point(alpha=0.5) + geom\_line()
+
+\##Research Question 4 —————————— \#summarizing selection: \#3
+
+\#creating categorical variable from perimeter means (to better
+visualize relationship with diagnosis) perimeter\_category &lt;-
+cut(cancer\_sample$perimeter\_mean, seq(0,200,25), right=FALSE, labels=
+c(1:8))
+
+\#graphing selection: \#5 (shows a bar graph of malignant and benign
+diagnoses of increasing perimeter categories with a geom\_point addition
+to show perimeter means) ggplot(cancer\_sample,
+aes(x=perimeter\_category, fill=diagnosis)) +
+geom\_bar(position=“dodge”) +
+geom\_point(y=cancer\_sample$perimeter\_mean)
+
+### 1.2 (3 points)
+
+Based on the operations that you’ve completed, how much closer are you
+to answering your research questions? Think about what aspects of your
+research questions remain unclear. Can your research questions be
+refined, now that you’ve investigated your data a bit more? Which
+research questions are yielding interesting results?
+
+\#I am definitely closer to answering all research questions using
+visualization and the graphs. That said, I think drawing any conclusions
+about relationships or correlations requires further statistical
+analysis and tests, which were not included in this analysis (ie. linear
+regressions for two numerical variables such as tumor area and texture
+means).
+
+\#I think that the questions could actually be expanded rather than
+refined/limited. I feel as though there could be valuable information
+gained from understanding multivariable relationships with numerical
+variables.
+
+\#personally I think that the comparisons of benign and malignant
+diagnoses have been the most interesting - it’s clear that benign tumors
+have much narrower distributions in many of the dimension variables when
+compared to malignant tumors.
+
+### Attribution
+
+Thanks to Icíar Fernández Boyano for mostly putting this together, and
+Vincenzo Coia for launching.
