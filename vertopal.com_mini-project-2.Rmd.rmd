@@ -1,80 +1,19 @@
 ---
-output: html_document
+output: github_document
 title: Mini Data Analysis Milestone 2
 ---
 
-*To complete this milestone, you can edit [this `.rmd`
-file](https://raw.githubusercontent.com/UBC-STAT/stat545.stat.ubc.ca/master/content/mini-project/mini-project-2.Rmd)
-directly. Fill in the sections that are commented out with
-`<!--- start your work here--->`. When you are done, make sure to knit
-to an `.md` file by changing the output in the YAML header to
-`github_document`, before submitting a tagged release on canvas.*
-
-# Welcome to your second (and last) milestone in your mini data analysis project!
-
-In Milestone 1, you explored your data, came up with research questions,
-and obtained some results by making summary tables and graphs. This
-time, we will first explore more in depth the concept of *tidy data.*
-Then, you'll be sharpening some of the results you obtained from your
-previous milestone by:
-
--   Manipulating special data types in R: factors and/or dates and
-    times.
--   Fitting a model object to your data, and extract a result.
--   Reading and writing data as separate files.
-
-**NOTE**: The main purpose of the mini data analysis is to integrate
-what you learn in class in an analysis. Although each milestone provides
-a framework for you to conduct your analysis, it's possible that you
-might find the instructions too rigid for your data set. If this is the
-case, you may deviate from the instructions -- just make sure you're
-demonstrating a wide range of tools and techniques taught in this class.
-
-# Instructions
-
-**To complete this milestone**, edit [this very `.Rmd`
-file](https://raw.githubusercontent.com/UBC-STAT/stat545.stat.ubc.ca/master/content/mini-project/mini-project-2.Rmd)
-directly. Fill in the sections that are tagged with
-`<!--- start your work here--->`.
-
-**To submit this milestone**, make sure to knit this `.Rmd` file to an
-`.md` file by changing the YAML output settings from
-`output: html_document` to `output: github_document`. Commit and push
-all of your work to your mini-analysis GitHub repository, and tag a
-release on GitHub. Then, submit a link to your tagged release on canvas.
-
-**Points**: This milestone is worth 55 points (compared to the 45 points
-of the Milestone 1): 45 for your analysis, and 10 for your entire
-mini-analysis GitHub repository. Details follow.
-
-**Research Questions**: In Milestone 1, you chose two research questions
-to focus on. Wherever realistic, your work in this milestone should
-relate to these research questions whenever we ask for justification
-behind your work. In the case that some tasks in this milestone don't
-align well with one of your research questions, feel free to discuss
-your results in the context of a different research question.
-
-# Learning Objectives
-
-By the end of this milestone, you should:
-
--   Understand what *tidy* data is, and how to create it using `tidyr`.
--   Generate a reproducible and clear report using R Markdown.
--   Manipulating special data types in R: factors and/or dates and
-    times.
--   Fitting a model object to your data, and extract a result.
--   Reading and writing data as separate files.
+# Welcome to your second (and last) milestone in your mini data analysis project
 
 # Setup
 
 Begin by loading your data and the tidyverse package below:
 
-`{r, message = FALSE} library(datateachr) # <- might contain the data you picked! library(tidyverse)`
+library(datateachr)
+library(tidyverse)
+library(dplyr)
 
 # Task 1: Tidy your data (15 points)
-
-In this task, we will do several exercises to reshape our data. The goal
-here is to understand how to do this reshaping with the `tidyr` package.
 
 A reminder of the definition of *tidy* data:
 
@@ -82,39 +21,34 @@ A reminder of the definition of *tidy* data:
 -   Each column is a **variable**
 -   Each cell is a **value**
 
-*Tidy'ing* data is sometimes necessary because it can simplify
-computation. Other times it can be nice to organize data so that it can
-be easier to understand when read manually.
-
 ### 2.1 (2.5 points)
 
 Based on the definition above, can you identify if your data is tidy or
 untidy? Go through all your columns, or if you have \>8 variables, just
 pick 8, and explain whether the data is untidy or tidy.
 
-```{=html}
-<!--------------------------- Start your work below --------------------------->
-```
-```{=html}
-<!----------------------------------------------------------------------------->
-```
+##Variables selected: ID, Diagnosis, radius_mean, texture_mean, perimeter_mean, area_mean, smoothness_mean, compactness_mean
+
+#This data can be considered tidy because it meets the three requirements. Each row refers to one patient sample, each column considered here can be considered a variable, and each cell has an entry (as verified using is.na below)
+is.na(cancer_sample$ID)
+is.na(cancer_sample$radius_mean)
+is.na(cancer_sample$texture_mean)
+is.na(cancer_sample$perimeter_mean)
+is.na(cancer_sample$area_mean)
+is.na(cancer_sample$smoothness_mean)
+is.na(cancer_sample$compactness_mean)
+
 ### 2.2 (5 points)
 
 Now, if your data is tidy, untidy it! Then, tidy it back to it's
 original state.
 
-If your data is untidy, then tidy it! Then, untidy it back to it's
-original state.
+##since the dataset can be considered tidy, I will untidy the data first:
+df %>%
+pivot_wider(cancer_sample, names_from = Diagnosis, values_from = compactness_mean)
 
-Be sure to explain your reasoning for this task. Show us the "before"
-and "after".
 
-```{=html}
-<!--------------------------- Start your work below --------------------------->
-```
-```{=html}
-<!----------------------------------------------------------------------------->
-```
+
 ### 2.3 (7.5 points)
 
 Now, you should be more familiar with your data, and also have made
