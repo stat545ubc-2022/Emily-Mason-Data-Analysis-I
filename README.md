@@ -2,8 +2,9 @@
 
 STAT 545A Mini Data Analysis Project - Cancer Sample Exploratory Analysis
 
-In this repository for Deliverable 1, the following documents may be found:
+In this repository for Deliverable 1, the following folders may be found:
 
-- vertopal.com_mini-project-1.Rmd.rmd -> completed assignment in R markdown
-- vertopal.com_mini-project-1.Rmd.md -> knitted completed assignment (.md)
+- Milestone 1 (includes all R files for Milestone 1)
+- Milestone 2 (includes all R files for Milestone 2)
+- outputs (includes all files as required within Milestone 2)
 
