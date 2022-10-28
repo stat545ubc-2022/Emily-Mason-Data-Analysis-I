@@ -27,6 +27,9 @@ Based on the definition above, can you identify if your data is tidy or
 untidy? Go through all your columns, or if you have \>8 variables, just
 pick 8, and explain whether the data is untidy or tidy.
 
+```{=html}
+<!--------------------------- Start your work below --------------------------->
+```
 ##Variables selected: ID, Diagnosis, radius_mean, texture_mean, perimeter_mean, area_mean, smoothness_mean, compactness_mean
 
 #This data can be considered tidy because it meets the three requirements. Each row refers to one patient sample, each column considered here can be considered a variable, and each cell has an entry (as verified using is.na below)
@@ -43,11 +46,15 @@ is.na(cancer_sample$compactness_mean)
 Now, if your data is tidy, untidy it! Then, tidy it back to it's
 original state.
 
-##since the dataset can be considered tidy, I will untidy the data first:
-df %>%
-pivot_wider(cancer_sample, names_from = Diagnosis, values_from = compactness_mean)
+#since the dataset can be considered tidy, I will untidy the data first by combining measurement mean variables into a single column:
+untidy <- pivot_longer(cancer_sample, cols = radius_mean:compactness_mean, names_to = "Measurement_Type")
 
+#now that the dataset is untidy, I will use the pivot_wider function to restore the dataset back to its original state
+retidy <- pivot_wider(untidy, names_from = "Measurement_Type", values_from = "value")
 
+```{=html}
+<!----------------------------------------------------------------------------->
+```
 
 ### 2.3 (7.5 points)
 
@@ -59,8 +66,8 @@ analysis in the next four tasks:
 ```{=html}
 <!-------------------------- Start your work below ---------------------------->
 ```
-1.  *FILL_THIS_IN*
-2.  *FILL_THIS_IN*
+# 1.  How do mean tumor dimensions correlate with diagnosis?
+# 2.  are mean tumor area and texture related?
 
 ```{=html}
 <!----------------------------------------------------------------------------->
@@ -70,6 +77,7 @@ Explain your decision for choosing the above two research questions.
 ```{=html}
 <!--------------------------- Start your work below --------------------------->
 ```
+#I chose research question 1 because I think it will be challenging to consider multiple measures of tumor dimensions (ie. perimeter, area, smoothness) in relation to diagnosis. I chose research question 2 because at first glance I think these variables seem urelated - I am intrigued to see whether they are correlated in any significant way.
 ```{=html}
 <!----------------------------------------------------------------------------->
 ```
@@ -78,12 +86,32 @@ appropriate to answer these 2 questions. Use between 4 and 8 functions
 that we've covered so far (i.e. by filtering, cleaning, tidy'ing,
 dropping irrelevant columns, etc.).
 
+
 ```{=html}
-<!--------------------------- Start your work below --------------------------->
+<!-------------------------- Start your work below ---------------------------->
 ```
+
+#function 1 - dropping unused columns
+tumor_dimension = subset(cancer_sample, select = c(ID, diagnosis, radius_mean, texture_mean, perimeter_mean, area_mean, smoothness_mean, compactness_mean))
+summary(tumor_dimension)
+
+#function 2 - filtering for large tumor size, where radius, perimeter and area are in the top quartile of values
+
+large_tumor <- filter(tumor_dimension, radius_mean > "15.780", perimeter_mean > "104.10", area_mean > "782.7")
+
+#function 3 - filtering for small tumor size, where radius, perimeter, and area are in the bottom quartile of values
+small_tumor <- filter(tumor_dimension, radius_mean < "16.32", perimeter_mean < "108.2", area_mean < "829.9")
+
+#function 4 - tidying data to include dimension measurement type
+measures_dimensions <- pivot_longer(tumor_dimension, cols = radius_mean:compactness_mean, names_to = "Measurement Type")
+
+#function 5 - create new categorical variable to include mean area sizes
+area_cat <- cut(tumor_dimension$area_mean, seq(0,1000,250), labels=c(1:4))
+
 ```{=html}
 <!----------------------------------------------------------------------------->
 ```
+
 # Task 2: Special Data Types (10)
 
 For this exercise, you'll be choosing two of the three tasks below --
@@ -99,6 +127,10 @@ Place the code for your plot below.
 ```{=html}
 <!-------------------------- Start your work below ---------------------------->
 ```
+
+ggplot(tumor_dimension, aes(x=perimeter_mean, y=compactness_mean, color=area_cat)) + geom_point(alpha=0.5)
+
+
 ```{=html}
 <!----------------------------------------------------------------------------->
 ```
@@ -144,7 +176,29 @@ Now, choose two of the following tasks.
 ```{=html}
 <!-------------------------- Start your work below ---------------------------->
 ```
-**Task Number**: FILL_THIS_IN
+**Task Number**: 1
+#create factor
+
+summary(cancer_sample$radius_mean)
+
+tumor_dimension_fct <- cancer_sample %>% 
+   filter(area_mean > 654.9) %>% 
+   mutate(radius_mean = factor(case_when(radius_mean < 11.7 ~ "low",
+                                 radius_mean < 14.127 ~ "moderate",
+                                 radius_mean < 15.780 ~ "high",
+                                 radius_mean > 15.780 ~ "very high"),
+                                 levels = c("low", "moderate", "high", "very high")))
+
+head(tumor_dimension_fct)
+
+#create new plot
+ggplot(tumor_dimension_fct) + geom_boxplot(aes(x = radius_mean, y = area_mean)) +
+  labs(y = "mean tumor area", x= "mean radius") +
+  scale_x_discrete(drop = FALSE) + # Don't drop the very low factor
+  ggtitle("Tumor dimensions") +
+  theme_bw() 
+#explain reordering
+#I chose to reorder the mean radius values into low:very high as a measure of tumor dimension for further visualization and analysis. The reordering was done based on the quartiles of the radius means, as computed using the summary function.
 
 ```{=html}
 <!----------------------------------------------------------------------------->
@@ -152,7 +206,14 @@ Now, choose two of the following tasks.
 ```{=html}
 <!-------------------------- Start your work below ---------------------------->
 ```
-**Task Number**: FILL_THIS_IN
+**Task Number**: 2
+
+#collapse factor using forcats
+fct_collapse(tumor_dimension_fct$radius_mean,
+large = c("high", "very high"),
+small = c("low", "moderate"))
+#explanation
+#I collapsed some of the levels of mean radius to summarize whether the tumor dimensions (using radius as a surrogate measure) were large or small, which would be useful to compare with diagnosis to answer one of the research questions
 
 ```{=html}
 <!----------------------------------------------------------------------------->
@@ -167,9 +228,9 @@ Pick a research question, and pick a variable of interest (we'll call it
 ```{=html}
 <!-------------------------- Start your work below ---------------------------->
 ```
-**Research Question**: FILL_THIS_IN
+**Research Question**: How are tumor dimensions related to diagnosis?
 
-**Variable of interest**: FILL_THIS_IN
+**Variable of interest**: diagnosis
 
 ```{=html}
 <!----------------------------------------------------------------------------->
@@ -198,6 +259,13 @@ specifics in STAT 545.
 ```{=html}
 <!-------------------------- Start your work below ---------------------------->
 ```
+
+#visualizing the relationship
+ggplot(tumor_dimension, aes(x=compactness_mean, y=area_mean, group=diagnosis, color=diagnosis)) + 
+  geom_line() + geom_point()
+#t.test of mean area between diagnoses
+tt <- t.test(tumor_dimension$area_mean~tumor_dimension$diagnosis, mu=0, alt = "two.sided", conf = 0.95, var.eq = F, paired = F)
+
 ```{=html}
 <!----------------------------------------------------------------------------->
 ```
@@ -218,6 +286,11 @@ Y, or a single value like a regression coefficient or a p-value.
 ```{=html}
 <!-------------------------- Start your work below ---------------------------->
 ```
+
+#broom tibble produced from comparing mean areas of tumors with benign and malignant tumors:
+library(broom)
+tidy(tt)
+
 ```{=html}
 <!----------------------------------------------------------------------------->
 ```
@@ -243,6 +316,15 @@ function.
 ```{=html}
 <!-------------------------- Start your work below ---------------------------->
 ```
+
+#here:here function
+here::here()
+dir.create(here::here("output"))
+
+write_csv(tumor_dimension, dir(here::here("output", tumor_dimension.csv)))
+
+dir(here::here("output"))
+
 ```{=html}
 <!----------------------------------------------------------------------------->
 ```
@@ -258,6 +340,11 @@ Use the functions `saveRDS()` and `readRDS()`.
 ```{=html}
 <!-------------------------- Start your work below ---------------------------->
 ```
+
+saveRDS(tt, dir(here::here("output", "diagnosis_t.RDS")))
+
+readRDS("diagnosis_t.RDS")
+
 ```{=html}
 <!----------------------------------------------------------------------------->
 ```
